@@ -3,7 +3,7 @@ declare ( encoding = 'UTF-8' );
 /**
  * Plugin Name: T5 Opera Speed Dial Preview
  * Description: Your latest posts and comments in Opera’s Speed Dial preview.
- * Version:     2012.03.04
+ * Version:     2012.03.05
  * Required:    3.3
  * Author:      Thomas Scholz <info@toscho.de>
  * Author URI:  http://toscho.de
