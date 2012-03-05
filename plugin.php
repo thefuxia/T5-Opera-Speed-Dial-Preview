@@ -37,6 +37,13 @@ declare ( encoding = 'UTF-8' );
 // Wait until all needed functions are loaded.
 add_action( 'plugins_loaded', array ( 'T5_Opera_Speed_Dial', 'init' ) );
 
+add_filter(
+	'plugin_row_meta',
+	array( 'T5_Opera_Speed_Dial', 'add_feedback_link' ),
+	10,
+	2
+);
+
 register_activation_hook(
 	__FILE__,
 	array ( 'T5_Opera_Speed_Dial', 'set_rewrite_rule' )
@@ -205,5 +212,24 @@ class T5_Opera_Speed_Dial
 	    }
 
 	    return $short . $append;
+	}
+
+	/**
+	 * Adds a link to the GitHub bug tracker.
+	 *
+	 * @param  array  $links Already existing links.
+	 * @return string
+	 */
+	public static function add_feedback_link( $links, $file )
+	{
+		static $base_name = '';
+		'' == $base_name and $base_name = plugin_basename( __FILE__ );
+
+		if ( $base_name == $file )
+		{
+			$links[]  = "<a href='https://github.com/toscho/T5-Opera-Speed-Dial-Preview/issues'>Send feedback</a>";
+		}
+
+		return $links;
 	}
 }
