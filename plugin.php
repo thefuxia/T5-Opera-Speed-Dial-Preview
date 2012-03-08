@@ -37,6 +37,7 @@ declare ( encoding = 'UTF-8' );
 
 // Wait until all needed functions are loaded.
 add_action( 'plugins_loaded', array ( 'T5_Opera_Speed_Dial', 'init' ) );
+add_action( 'init', array ( 'T5_Opera_Speed_Dial', 'set_rewrite_rule' ) );
 
 add_filter(
 	'plugin_row_meta',
@@ -82,6 +83,7 @@ class T5_Opera_Speed_Dial
 	 */
 	public function __construct()
 	{
+
 		add_filter( 'query_vars', array ( $this, 'add_query_var' ) );
 		// Hook in late to allow other plugins to operate earlier.
 		add_action( 'template_redirect', array ( $this, 'render' ), 100 );
@@ -115,7 +117,7 @@ class T5_Opera_Speed_Dial
 			'index.php?' . self::$query_var . '=1',
 			'top'
 		);
-		flush_rewrite_rules();
+		'init' != current_filter() and flush_rewrite_rules();
 	}
 
 	/**
@@ -139,6 +141,7 @@ class T5_Opera_Speed_Dial
 	 */
 	public function render()
 	{
+		self::set_rewrite_rule();
 		if ( ! get_query_var( self::$query_var ) )
 		{
 			$this->redirect();
