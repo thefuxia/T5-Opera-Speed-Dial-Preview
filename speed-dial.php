@@ -40,13 +40,15 @@ declare ( encoding = 'UTF-8' );
 		<?php
 		/*
 		 * Note that <style media='screen and (view-mode: minimized)'> will not
-		 * work. You may use an external stylesheet. It sould not contain any
+		 * work. You may use an external stylesheet. It should not contain any
 		 * other media (or non-media) rules, or the sky will fall onto your head.
 		 * For now, the following method works best.
 		 *
 		 * I use a very basic style sheet here.
-		 * Single links will not be clickable, that’s why I removed the
-		 * text-decoration.
+		 * Single links will not be clickable in preview mode, that’s why I
+		 * removed the text-decoration.
+		 * screen and (max-width: 500px) will catch cases when visitors with a
+		 * small screen land on /speeddial/.
 		 */
 		?>
 		<style>
@@ -66,10 +68,8 @@ declare ( encoding = 'UTF-8' );
 		text-align:			center;
 		padding:			5px;
 	}
-	ul {
-		list-style:			none;
-	}
 	li {
+		list-style:			none;
 		padding:			3px 10px;
 		border-top:			1px solid #ddd;
 	}
