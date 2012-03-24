@@ -50,7 +50,7 @@ declare ( encoding = 'UTF-8' );
 		 */
 		?>
 		<style>
-@media screen and (view-mode: minimized) {
+@media screen and (view-mode: minimized), screen and (max-width: 500px) {
 	* {
 		margin:				0;
 		padding:			0;
