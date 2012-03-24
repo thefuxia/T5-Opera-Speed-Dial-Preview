@@ -11,35 +11,26 @@ declare ( encoding = 'UTF-8' );
  */
 ?>
 <!Doctype html>
-<html>
+<html <?php language_attributes(); ?>>
 	<head>
 		<meta charset='utf-8'>
 		<title><?php
-		/*
-		 * The title will be the visible name below the speed dial image.
+		/* The title will be the visible name below the speed dial image.
 		 * Make sure it is short enough to fit. Use the static function
-		 * T5_Opera_Speed_Dial::utf8_truncate() to shorten the title.
-		 */
+		 * T5_Opera_Speed_Dial::utf8_truncate() to shorten the title. */
 		print T5_Opera_Speed_Dial::utf8_truncate( get_bloginfo( 'name' ), 50 );
 		?></title>
 		<?php
-		/*
-		 * To be honest: I couldn’t see a difference using this tag. It may be
-		 * useful if the implementation changes or if you visit the page in a
-		 * mobile browser.
-		 */
+		/* If you visit the page in a mobile browser. */
 		?>
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 		<?php
-		/*
-		 * Set a refresh rate in seconds. Default here: 2 hours.
-		 * If you don’t want any refresh just leave the element out.
-		 */
+		/* Set a refresh rate in seconds. Default here: 2 hours.
+		 * If you don’t want any refresh just leave the element out. */
 		?>
 		<meta http-equiv='preview-refresh' content='7200'>
 		<?php
-		/*
-		 * Note that <style media='screen and (view-mode: minimized)'> will not
+		/* Note that <style media='screen and (view-mode: minimized)'> will not
 		 * work. You may use an external stylesheet. It should not contain any
 		 * other media (or non-media) rules, or the sky will fall onto your head.
 		 * For now, the following method works best.
@@ -48,8 +39,7 @@ declare ( encoding = 'UTF-8' );
 		 * Single links will not be clickable in preview mode, that’s why I
 		 * removed the text-decoration.
 		 * screen and (max-width: 500px) will catch cases when visitors with a
-		 * small screen land on /speeddial/.
-		 */
+		 * small screen land on /speeddial/. */
 		?>
 		<style>
 @media screen and (view-mode: minimized), screen and (max-width: 500px) {
@@ -81,15 +71,11 @@ declare ( encoding = 'UTF-8' );
 	</head>
 	<body>
 	<?php
-	/**
-	 * Three posts only. Remember: We don’t have much space.
-	 * If you don’t show comments you may set the number to 6.
-	 */
+	/* Three posts only. Remember: We don’t have much space.
+	 * If you don’t show comments you may set the number to 6. */
 	if ( ! $posts = get_posts( array ( 'numberposts' => 3 ) ) )
 	{
-		/*
-		 * There are no posts. No comments probably too.
-		 */
+		/* There are no posts. No comments probably too. */
 		?><h1><?php bloginfo( 'name' ); ?></h1><?php
 	}
 	else
@@ -102,17 +88,13 @@ declare ( encoding = 'UTF-8' );
 			?>
 			<li>
 				<?php
-				/*
-				 * Just day and month.
-				 */
+				/* Just day and month. */
 				print mysql2date( 'd.m', $post->post_date );
 				?>:
 				<a href="<?php
-					/*
-					 * Links are not clickable in speed dial. But if someone
+					/* Links are not clickable in speed dial. But if someone
 					 * reads the page in a regular browser window we want to
-					 * offer something useful. Hence the links.
-					 */
+					 * offer something useful. Hence the links. */
 					print get_permalink( $post->ID );
 					?>"><?php
 					print T5_Opera_Speed_Dial::utf8_truncate(
@@ -127,12 +109,11 @@ declare ( encoding = 'UTF-8' );
 		<?php
 	}
 
-	/*
-	 * Again just three comments. And no pingbacks.
+	/* Again just three comments. And no pingbacks.
 	 * If you don’t use the comment list, you may show more posts.
-	 * We shorten the commenter’s name and the comment excerpt.
-	 */
+	 * We shorten the commenter’s name and the comment excerpt. */
 	$comment_args = array ( 'number' => 3, 'type' => 'comment' );
+
 	if ( $comments = get_comments( $comment_args ) )
 	{
 		?><h1><?php _e( 'Comments' ); ?></h1>
@@ -142,19 +123,15 @@ declare ( encoding = 'UTF-8' );
 		{
 			?><li>
 				<?php
-				/*
-				 * Usually, there are more comments than posts. So we
-				 * include the time too.
-				 */
+				/* Usually, there are more comments than posts. So we
+				 * include the time too. */
 				print mysql2date( 'd.m · H:i', $comment->comment_date )
 				. ' '
 				. T5_Opera_Speed_Dial::utf8_truncate(
 					get_comment_author( $comment->comment_ID )
 				);
 				?>: <a href="<?php
-					/*
-					 * Links again. See the explanation above to understand why.
-					 */
+					/* Links again. See the explanation above. */
 					print esc_url( get_comment_link( $comment->comment_ID ) );
 					?>"><?php
 					print T5_Opera_Speed_Dial::utf8_truncate(
