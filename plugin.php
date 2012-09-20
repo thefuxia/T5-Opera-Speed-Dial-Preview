@@ -4,7 +4,7 @@ declare ( encoding = 'UTF-8' );
  * Plugin Name: T5 Opera Speed Dial Preview
  * Plugin URI:  https://github.com/toscho/T5-Opera-Speed-Dial-Preview
  * Description: Your latest posts and comments in Opera’s Speed Dial preview.
- * Version:     2012.03.05
+ * Version:     2012.09.20
  * Required:    3.3
  * Author:      Thomas Scholz <info@toscho.de>
  * Author URI:  http://toscho.de
@@ -62,6 +62,7 @@ class T5_Opera_Speed_Dial
 	/**
 	 * Current plugin instance.
 	 *
+	 * @since 2012.09.20
 	 * @see get_instance()
 	 * @type NULL|object
 	 */
