@@ -89,7 +89,6 @@ class T5_Opera_Speed_Dial
 	{
 		isset ( $vars[ self::$query_var ] ) and $vars[ self::$query_var ] = TRUE;
 		return $vars;
-
 	}
 
 	/**
@@ -199,11 +198,11 @@ class T5_Opera_Speed_Dial
 	public static function add_feedback_link( $links, $file )
 	{
 		static $base_name = '';
-		'' == $base_name and $base_name = plugin_basename( __FILE__ );
+		'' === $base_name and $base_name = plugin_basename( __FILE__ );
 
-		if ( $base_name == $file )
+		if ( $base_name === $file )
 		{
-			$links[]  = "<a href='https://github.com/toscho/T5-Opera-Speed-Dial-Preview/issues'>Send feedback</a>";
+			$links[] = "<a href='https://github.com/toscho/T5-Opera-Speed-Dial-Preview/issues'>Send feedback</a>";
 		}
 
 		return $links;
