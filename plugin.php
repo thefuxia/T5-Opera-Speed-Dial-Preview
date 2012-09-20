@@ -1,21 +1,21 @@
 <?php # -*- coding: utf-8 -*-
 /**
- * Plugin Name: T5 Opera Speed Dial Preview
- * Plugin URI:  https://github.com/toscho/T5-Opera-Speed-Dial-Preview
- * Description: Your latest posts and comments in Opera’s Speed Dial preview.
- * Version:     2012.09.20
- * Required:    3.3
- * Author:      Thomas Scholz <info@toscho.de>
- * Author URI:  http://toscho.de
- * License:     MIT
- * License URI: http://www.opensource.org/licenses/mit-license.php
+ * Plugin Name:  T5 Opera Speed Dial Preview
+ * Plugin URI:   https://github.com/toscho/T5-Opera-Speed-Dial-Preview
+ * Feedback URI: https://github.com/toscho/T5-Opera-Speed-Dial-Preview/issues
+ * Description:  Your latest posts and comments in Opera’s Speed Dial preview.
+ * Version:      2012.09.21
+ * Required:     3.3
+ * Author:       Thomas Scholz <info@toscho.de>
+ * Author URI:   http://toscho.de
+ * License:      MIT
+ * License URI:  http://www.opensource.org/licenses/mit-license.php
  *
  * Copyright (c) 2012 Thomas Scholz
  */
 
 // Wait until all needed functions are loaded.
 add_action( 'init', array ( 'T5_Opera_Speed_Dial', 'get_instance' ) );
-
 
 /**
  * Creates a dedicated speed dial page.
@@ -67,7 +67,7 @@ class T5_Opera_Speed_Dial
 		// Hook in late to allow other plugins to operate earlier.
 		add_action( 'template_redirect', array ( $this, 'render' ), 100 );
 
-		add_filter( 'plugin_row_meta', array( $this, 'add_feedback_link' ), 10, 2 );
+		add_filter( 'plugin_row_meta', array( $this, 'add_plugin_links' ), 10, 2 );
 	}
 
 	/**
@@ -83,23 +83,17 @@ class T5_Opera_Speed_Dial
 	 */
 	public function set_query_var( $vars )
 	{
-		isset ( $vars[ self::$query_var ] ) and $vars[ self::$query_var ] = TRUE;
+		if ( isset ( $vars[ self::$query_var ] )
+			or ( isset ( $vars['pagename'] ) and self::$query_var === $vars['pagename'] )
+			or ( isset ( $vars['page'] ) and self::$query_var === $vars['name'] )
+			)
+		{
+			// In some cases WP misinterprets the request as a page request and
+			// returns a 404.
+			$vars['page'] = $vars['pagename'] = $vars['name'] = FALSE;
+			$vars[ self::$query_var ] = TRUE;
+		}
 		return $vars;
-	}
-
-	/**
-	 * Redirect to speed dial page if it is a preview request.
-	 *
-	 * @wp-hook template_redirect
-	 * @return void
-	 */
-	public function redirect()
-	{
-		isset ( $_SERVER['HTTP_X_PURPOSE'] )
-		and 'preview' == $_SERVER['HTTP_X_PURPOSE']
-		and ! get_query_var( self::$query_var )
-		and wp_redirect( home_url( self::$query_var ) )
-		and exit;
 	}
 
 	/**
@@ -186,22 +180,64 @@ class T5_Opera_Speed_Dial
 	}
 
 	/**
-	 * Adds a link to the GitHub bug tracker.
+	 * Adds link to this plugin’s row in the plugin list table.
 	 *
 	 * @wp-hook plugin_row_meta
-	 * @param  array  $links Already existing links.
-	 * @return array
+	 * @param   array  $links Already existing links.
+	 * @return  array
 	 */
-	public static function add_feedback_link( $links, $file )
+	public function add_plugin_links( $links, $file )
 	{
 		static $base_name = '';
 		'' === $base_name and $base_name = plugin_basename( __FILE__ );
 
 		if ( $base_name === $file )
 		{
-			$links[] = "<a href='https://github.com/toscho/T5-Opera-Speed-Dial-Preview/issues'>Send feedback</a>";
+			$feedback = $this->get_feedback_uri( __FILE__ );
+			$feedback && $links[] = "<a href='$feedback'>Send feedback</a>";
+			$links[] = sprintf( '<a href="%s">View Output</a>', $this->get_endpoint_url() );
 		}
 
 		return $links;
+	}
+
+	/**
+	 * Get custom header value for feedback URI.
+	 *
+	 * @wp-hook plugin_row_meta
+	 * @param   string $file
+	 * @since   2012.09.21
+	 * @return  string
+	 */
+	public function get_feedback_uri( $file )
+	{
+		$data = get_file_data( __FILE__, array ( 'Feedback URI' ) );
+
+		return empty ( $data ) ? '' : $data[0];
+	}
+
+	/**
+	 * Get the URL for our endpoint.
+	 *
+	 * @return  string
+	 * @wp-hook plugin_row_meta
+	 * @since   2012.09.21
+	 * @return  string
+	 */
+	public function get_endpoint_url()
+	{
+		// If that is false, there are no pretty permalinks.
+		$has_permalinks = get_option( 'permalink_structure' );
+		$home = home_url( '/' );
+
+		if ( ! $has_permalinks )
+		{
+			return add_query_arg(
+				array ( self::$query_var => 1 ),
+				$home
+			);
+		}
+
+		return user_trailingslashit( $home . self::$query_var );
 	}
 }
