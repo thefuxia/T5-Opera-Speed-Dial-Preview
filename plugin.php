@@ -16,12 +16,6 @@
 // Wait until all needed functions are loaded.
 add_action( 'init', array ( 'T5_Opera_Speed_Dial', 'get_instance' ) );
 
-add_filter(
-	'plugin_row_meta',
-	array( 'T5_Opera_Speed_Dial', 'add_feedback_link' ),
-	10,
-	2
-);
 
 /**
  * Creates a dedicated speed dial page.
@@ -72,6 +66,8 @@ class T5_Opera_Speed_Dial
 		add_filter( 'request', array ( $this, 'set_query_var' ) );
 		// Hook in late to allow other plugins to operate earlier.
 		add_action( 'template_redirect', array ( $this, 'render' ), 100 );
+
+		add_filter( 'plugin_row_meta', array( $this, 'add_feedback_link' ), 10, 2 );
 	}
 
 	/**
@@ -192,8 +188,9 @@ class T5_Opera_Speed_Dial
 	/**
 	 * Adds a link to the GitHub bug tracker.
 	 *
+	 * @wp-hook plugin_row_meta
 	 * @param  array  $links Already existing links.
-	 * @return string
+	 * @return array
 	 */
 	public static function add_feedback_link( $links, $file )
 	{
