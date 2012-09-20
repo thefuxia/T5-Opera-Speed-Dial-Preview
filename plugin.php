@@ -14,7 +14,7 @@
  */
 
 // Wait until all needed functions are loaded.
-add_action( 'plugins_loaded', array ( 'T5_Opera_Speed_Dial', 'get_instance' ) );
+add_action( 'init', array ( 'T5_Opera_Speed_Dial', 'get_instance' ) );
 add_action( 'init', array ( 'T5_Opera_Speed_Dial', 'set_rewrite_rule' ) );
 
 add_filter(
@@ -56,7 +56,7 @@ class T5_Opera_Speed_Dial
 	/**
 	 * Creates a new instance.
 	 *
-	 * @wp-hook plugins_loaded
+	 * @wp-hook init
 	 * @see     __construct()
 	 * @return  void
 	 */
@@ -68,6 +68,8 @@ class T5_Opera_Speed_Dial
 
 	/**
 	 * Set actions, filters and basic variables, load language.
+	 *
+	 * @wp-hook init
 	 */
 	public function __construct()
 	{
