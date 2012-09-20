@@ -15,7 +15,6 @@
 
 // Wait until all needed functions are loaded.
 add_action( 'init', array ( 'T5_Opera_Speed_Dial', 'get_instance' ) );
-add_action( 'init', array ( 'T5_Opera_Speed_Dial', 'set_rewrite_rule' ) );
 
 add_filter(
 	'plugin_row_meta',
@@ -24,10 +23,6 @@ add_filter(
 	2
 );
 
-register_activation_hook(
-	__FILE__,
-	array ( 'T5_Opera_Speed_Dial', 'set_rewrite_rule' )
-);
 /**
  * Creates a dedicated speed dial page.
  *
@@ -73,10 +68,28 @@ class T5_Opera_Speed_Dial
 	 */
 	public function __construct()
 	{
-
-		add_filter( 'query_vars', array ( $this, 'add_query_var' ) );
+		add_rewrite_endpoint( self::$query_var, EP_ROOT );
+		add_filter( 'request', array ( $this, 'set_query_var' ) );
 		// Hook in late to allow other plugins to operate earlier.
 		add_action( 'template_redirect', array ( $this, 'render' ), 100 );
+	}
+
+	/**
+	 * Set the endpoint variable to TRUE.
+	 *
+	 * If the endpoint was called without further parameters it does not
+	 * evaluate to TRUE otherwise.
+	 *
+	 * @wp-hook request
+	 * @since   2012.09.20
+	 * @param   array $vars
+	 * @return  array
+	 */
+	public function set_query_var( $vars )
+	{
+		isset ( $vars[ self::$query_var ] ) and $vars[ self::$query_var ] = TRUE;
+		return $vars;
+
 	}
 
 	/**
@@ -95,35 +108,6 @@ class T5_Opera_Speed_Dial
 	}
 
 	/**
-	 * Register an URI.
-	 *
-	 * @wp-hook activation
-	 * @return  void
-	 */
-	public static function set_rewrite_rule()
-	{
-		add_rewrite_rule(
-			'^' . self::$query_var . '$',
-			'index.php?' . self::$query_var . '=1',
-			'top'
-		);
-		'init' != current_filter() and flush_rewrite_rules();
-	}
-
-	/**
-	 * Register our query var.
-	 *
-	 * @wp-hook query_vars
-	 * @param array $vars Existing query vars
-	 * @return array
-	 */
-	public function add_query_var( $vars )
-	{
-		$vars[] = self::$query_var;
-		return $vars;
-	}
-
-	/**
 	 * Redirect to speed dial page or print it out if we are already there.
 	 *
 	 * @wp-hook template_redirect
@@ -131,10 +115,8 @@ class T5_Opera_Speed_Dial
 	 */
 	public function render()
 	{
-		self::set_rewrite_rule();
-		if ( ! get_query_var( self::$query_var ) )
+		if ( ! is_front_page() or ! get_query_var( self::$query_var ) )
 		{
-			$this->redirect();
 			return;
 		}
 
