@@ -36,7 +36,7 @@ declare ( encoding = 'UTF-8' );
 ! defined( 'ABSPATH' ) and exit;
 
 // Wait until all needed functions are loaded.
-add_action( 'plugins_loaded', array ( 'T5_Opera_Speed_Dial', 'init' ) );
+add_action( 'plugins_loaded', array ( 'T5_Opera_Speed_Dial', 'get_instance' ) );
 add_action( 'init', array ( 'T5_Opera_Speed_Dial', 'set_rewrite_rule' ) );
 
 add_filter(
@@ -60,6 +60,14 @@ register_activation_hook(
 class T5_Opera_Speed_Dial
 {
 	/**
+	 * Current plugin instance.
+	 *
+	 * @see get_instance()
+	 * @type NULL|object
+	 */
+	protected static $instance = NULL;
+
+	/**
 	 * Internal handler for WordPress
 	 *
 	 * @type string
@@ -73,9 +81,10 @@ class T5_Opera_Speed_Dial
 	 * @see     __construct()
 	 * @return  void
 	 */
-	public static function init()
+	public static function get_instance()
 	{
-		new self;
+		NULL === self::$instance and self::$instance = new self;
+		return self::$instance;
 	}
 
 	/**
